@@ -12,9 +12,7 @@
  * MQTT
  */
 
-const char *MQTT_HOST = "__YOUR_MQTT_SERVER_IP__";
-const uint16_t MQTT_PORT = 1883;
-const char *MQTT_OUT_TOPIC = "esprinkler/out";
+
 
 PubSubClient mqttClient(wifiClient);
 
