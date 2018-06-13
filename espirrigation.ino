@@ -235,6 +235,42 @@ void initMQTT() {
     mqttConnect();
 }
 
+void initOTA() {
+
+    ArduinoOTA.setHostname(ESP_NAME);
+
+    ArduinoOTA.onStart([]() {
+        otaInProgress = true;
+        Serial.println("Start updating...");
+        events.send("start", "ota");
+    });
+
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+        char msg[4];
+        snprintf(msg, sizeof(msg), "%u", (progress / (total / 100)));
+        Serial.println(msg);
+        events.send(msg, "ota");
+    });
+
+    ArduinoOTA.onEnd([]() {
+        Serial.println("\nend");
+        events.send("end", "ota");
+        otaInProgress = false;
+    });
+
+    ArduinoOTA.onError([](ota_error_t error) {
+        String msg;
+        if (error == OTA_AUTH_ERROR) msg = "auth failed";
+        else if (error == OTA_BEGIN_ERROR) msg = "begin failed";
+        else if (error == OTA_CONNECT_ERROR) msg = "connect failed";
+        else if (error == OTA_RECEIVE_ERROR) msg = "receive failed";
+        else if (error == OTA_END_ERROR) msg = "end failed";
+        Serial.printf("Error: %s", msg.c_str());
+        events.send(msg.c_str());
+    });
+
+    ArduinoOTA.begin();
+}
 
 
 void setup(void){
