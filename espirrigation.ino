@@ -211,6 +211,10 @@ void initWiFi() {
     Serial.println(WiFi.localIP());
 }
 
+void mqttPublish(const char *payload, const char *topic) {
+    mqttClient.publish(topic, payload);
+}
+
 void mqttConnect() {
     while (!mqttClient.connected()) {
         Serial.println("Attempting MQTT connection...");
